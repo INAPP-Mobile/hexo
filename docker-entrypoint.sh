@@ -1,27 +1,30 @@
 #!/bin/sh
 # Hexo blogging platform container bootstrap.
-# - fixes volume ownership (idempotent)
-# - seeds /app/source and /app/public from pristine image copies on first boot
+# - seeds /data/source and /data/public from pristine image copies on first boot
 # - injects hexo-admin auth + site URL into _config.yml from env
 # - generates /data/artalk.yml (Artalk comments) from env
 # - hands off to supervisord (nginx + hexo + artalk + ttyd + minio)
+#
+# Single persistent volume at /data: site source, generated site, comment
+# SQLite DB, uploaded images and MinIO data all live there.
 
 set -e
 
 export TZ="${TZ:-UTC}"
 export PORT="${PORT:-80}"
 
-# --- volumes: ownership (Railway mounts them as root) ---
+# --- volumes: ownership (Railway mounts as root) ---
 chown -R node:node /app /data 2>/dev/null || true
 
-# --- seed site content on first boot ---
-if [ ! -d /app/source/_posts ] || [ -z "$(ls -A /app/source/_posts 2>/dev/null)" ]; then
-  echo "[entrypoint] seeding /app/source from image copy"
-  cp -a /opt/hexo-source/. /app/source/
+# --- seed site content on first boot (volume is empty) ---
+mkdir -p /data/source /data/public
+if [ -z "$(ls -A /data/source/_posts 2>/dev/null)" ]; then
+  echo "[entrypoint] seeding /data/source from image copy"
+  cp -a /opt/hexo-data/source/. /data/source/
 fi
-if [ ! -f /app/public/index.html ]; then
-  echo "[entrypoint] seeding /app/public from image copy"
-  cp -a /opt/hexo-public/. /app/public/
+if [ ! -f /data/public/index.html ]; then
+  echo "[entrypoint] seeding /data/public from image copy"
+  cp -a /opt/hexo-data/public/. /data/public/
 fi
 
 # --- hexo _config.yml: public URL from Railway ---
@@ -34,6 +37,9 @@ node /app/tools/admin-auth.js "$ADMIN_USERNAME" "$ADMIN_PASSWORD"
 
 # --- Artalk comments config ---
 node /app/tools/gen-artalk-config.js
+
+# --- ensure everything the node processes touch is node-owned ---
+chown -R node:node /app /data 2>/dev/null || true
 
 # --- MinIO defaults ---
 export MINIO_ROOT_USER="${MINIO_ROOT_USER:-minioadmin}"

@@ -8,7 +8,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
-RUN npx hexo generate
+# Generate into /data/public (matches runtime source_dir/public_dir)
+RUN mkdir -p /data/source && cp -a /app/source/. /data/source/ && npx hexo generate
 
 ######## Stage 2: runtime ########
 FROM node:22-slim
@@ -38,10 +39,8 @@ RUN curl -fsSL https://dl.min.io/server/minio/release/linux-amd64/minio -o /usr/
 WORKDIR /app
 COPY --from=build /app /app
 
-# Pristine copies used to seed the persistent volumes on first boot
-RUN mkdir -p /data \
- && cp -a /app/source /opt/hexo-source \
- && cp -a /app/public /opt/hexo-public
+# Pristine site copies used to seed the persistent volume (/data) on first boot
+COPY --from=build /data /opt/hexo-data
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY supervisord.conf /etc/supervisor/conf.d/hexo.conf
