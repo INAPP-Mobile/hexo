@@ -52,11 +52,11 @@
     "description": "Timezone for Artalk (IANA name)."
   },
   "MINIO_ROOT_USER": {
-    "value": "minioadmin",
-    "description": "S3 root username for the MinIO object store."
+    "value": "${{storage.MINIO_ROOT_USER}}",
+    "description": "S3 root username for the MinIO object store (referenced from storage service)."
   },
   "MINIO_ROOT_PASSWORD": {
-    "value": "${{secret(32)}}",
-    "description": "Auto-generated S3 root password for MinIO (read from storage service's Variables tab after deploy)."
+    "value": "${{storage.MINIO_ROOT_PASSWORD}}",
+    "description": "Auto-generated S3 root password for MinIO (referenced from storage service)."
   }
 }
