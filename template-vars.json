@@ -1,0 +1,47 @@
+{
+  "ADMIN_USERNAME": {
+    "defaultValue": "admin",
+    "description": "Login name for the hexo-admin web editor at /admin/. Password is auto-generated.",
+    "isOptional": true
+  },
+  "ADMIN_PASSWORD": {
+    "defaultValue": "${{secret(16)}}",
+    "description": "Auto-generated password for the hexo-admin editor (read it from the service's Variables tab after deploy). Login is required on /admin/.",
+    "isOptional": false
+  },
+  "ARTALK_SITE_DEFAULT": {
+    "defaultValue": "My Hexo Blog",
+    "description": "Site name used by the Artalk comment system.",
+    "isOptional": true
+  },
+  "ARTALK_DB_TYPE": {
+    "defaultValue": "sqlite",
+    "description": "Comment database: sqlite (file on the persistent volume) or pgsql/mysql/mssql (set DATABASE_URL too).",
+    "isOptional": true
+  },
+  "ARTALK_ADMIN_EMAIL": {
+    "defaultValue": "admin@example.com",
+    "description": "Email of the first comment moderator (login at /comment/admin/). Change after deploy.",
+    "isOptional": true
+  },
+  "ARTALK_ADMIN_PASSWORD": {
+    "defaultValue": "${{secret(16)}}",
+    "description": "Auto-generated password for the Artalk moderator account.",
+    "isOptional": false
+  },
+  "MINIO_ROOT_USER": {
+    "defaultValue": "minioadmin",
+    "description": "S3 root username for the MinIO object store (endpoint /minio, console /minio-console/).",
+    "isOptional": true
+  },
+  "MINIO_ROOT_PASSWORD": {
+    "defaultValue": "${{secret(16)}}",
+    "description": "Auto-generated S3 root password for MinIO.",
+    "isOptional": false
+  },
+  "TZ": {
+    "defaultValue": "UTC",
+    "description": "Timezone for the container, Hexo and Artalk (IANA name, e.g. America/New_York).",
+    "isOptional": true
+  }
+}

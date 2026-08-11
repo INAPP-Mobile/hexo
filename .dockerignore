@@ -1,0 +1,8 @@
+node_modules
+.git
+.gitignore
+*.log
+.deploy_git
+.DS_Store
+public
+npm-debug.log*

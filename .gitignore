@@ -1,0 +1,8 @@
+node_modules/
+public/
+.deploy_git/
+*.log
+.DS_Store
+data/
+db.json
+npm-debug.log*
