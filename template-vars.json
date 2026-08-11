@@ -36,7 +36,7 @@
   },
   "ARTALK_ADMIN_EMAIL": {
     "defaultValue": "admin@example.com",
-    "description": "Email of the first comment moderator (login at /admin/ on the comments service domain).",
+    "description": "Email of the first comment moderator (login at /sidebar/ on the comments service domain).",
     "isOptional": true
   },
   "ARTALK_ADMIN_PASSWORD": {

@@ -29,7 +29,7 @@
   },
   "ARTALK_ADMIN_EMAIL": {
     "value": "admin@example.com",
-    "description": "Email of the first comment moderator (login at /comment/admin/ on the comments service domain)."
+    "description": "Email of the first comment moderator (login at /sidebar/ on the comments service domain)."
   },
   "ARTALK_ADMIN_PASSWORD": {
     "value": "${{secret(16)}}",
