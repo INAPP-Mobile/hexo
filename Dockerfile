@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-# Hexo + hexo-admin + Artalk (comments) + MinIO (S3) + ttyd (web terminal)
-# Single service, one public URL: nginx :80 routes / (blog), /admin/, /comment/, /terminal/, /minio/
+# Hexo blog + hexo-admin + ttyd web terminal
+# Single service, one public URL: nginx routes / (blog), /admin/, /terminal/
 
 ######## Stage 1: build site + node_modules ########
 FROM node:22-slim AS build
@@ -16,25 +16,19 @@ FROM node:22-slim
 ENV DEBIAN_FRONTEND=noninteractive \
     PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-# nginx (web router), supervisor (process manager), curl (healthcheck), tzdata
+# nginx (web router), supervisor (process manager), curl (healthcheck), htpasswd (terminal auth), tzdata
 RUN apt-get update \
- && apt-get install -y --no-install-recommends nginx supervisor curl ca-certificates tzdata \
+ && apt-get install -y --no-install-recommends nginx supervisor curl apache2-utils ca-certificates tzdata \
  && rm -rf /var/lib/apt/lists/* \
  && rm -f /etc/nginx/sites-enabled/default
-
-# Artalk v2.10.0 (comments engine, Go binary)
-RUN curl -fsSL https://github.com/ArtalkJS/Artalk/releases/download/v2.10.0/artalk_v2.10.0_linux_amd64.tar.gz -o /tmp/artalk.tgz \
- && tar -xzf /tmp/artalk.tgz -C /opt --strip-components=1 artalk_v2.10.0_linux_amd64/artalk \
- && rm /tmp/artalk.tgz \
- && chmod +x /opt/artalk
 
 # ttyd 1.7.7 (web terminal, static binary)
 RUN curl -fsSL https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 -o /usr/local/bin/ttyd \
  && chmod +x /usr/local/bin/ttyd
 
-# MinIO (S3-compatible object storage, official rolling binary)
-RUN curl -fsSL https://dl.min.io/server/minio/release/linux-amd64/minio -o /usr/local/bin/minio \
- && chmod +x /usr/local/bin/minio
+# ttyd launcher (injects basic-auth credential from env when set)
+COPY start-ttyd.sh /usr/local/bin/start-ttyd.sh
+RUN chmod +x /usr/local/bin/start-ttyd.sh
 
 WORKDIR /app
 COPY --from=build /app /app
@@ -50,7 +44,7 @@ RUN chmod +x /docker-entrypoint.sh
 USER root
 EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -fsS http://127.0.0.1/ -o /dev/null || exit 1
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

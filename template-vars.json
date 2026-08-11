@@ -1,17 +1,32 @@
 {
+  "PORT": {
+    "defaultValue": "80",
+    "description": "Nginx HTTP port for the hexo service (Railway routes public domain here). Fixed at 80.",
+    "isOptional": false
+  },
+  "TZ": {
+    "defaultValue": "UTC",
+    "description": "Container timezone for all services (IANA name, e.g. America/New_York).",
+    "isOptional": true
+  },
   "ADMIN_USERNAME": {
     "defaultValue": "admin",
-    "description": "Login name for the hexo-admin web editor at /admin/. Password is auto-generated.",
+    "description": "Login name for the hexo-admin web editor at /admin/.",
     "isOptional": true
   },
   "ADMIN_PASSWORD": {
     "defaultValue": "${{secret(16)}}",
-    "description": "Auto-generated password for the hexo-admin editor (read it from the service's Variables tab after deploy). Login is required on /admin/.",
+    "description": "Auto-generated password for the hexo-admin editor (read it from the hexo service's Variables tab after deploy).",
     "isOptional": false
   },
-  "ARTALK_SITE_DEFAULT": {
+  "ARTALK_SITE_NAME": {
     "defaultValue": "My Hexo Blog",
     "description": "Site name used by the Artalk comment system.",
+    "isOptional": true
+  },
+  "ARTALK_SITE_URL": {
+    "defaultValue": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}",
+    "description": "Public URL of the Artalk service. Auto-derived from comments service's public domain.",
     "isOptional": true
   },
   "ARTALK_DB_TYPE": {
@@ -21,7 +36,7 @@
   },
   "ARTALK_ADMIN_EMAIL": {
     "defaultValue": "admin@example.com",
-    "description": "Email of the first comment moderator (login at /comment/admin/). Change after deploy.",
+    "description": "Email of the first comment moderator (login at /admin/ on the comments service domain).",
     "isOptional": true
   },
   "ARTALK_ADMIN_PASSWORD": {
@@ -29,19 +44,34 @@
     "description": "Auto-generated password for the Artalk moderator account.",
     "isOptional": false
   },
+  "ARTALK_APP_KEY": {
+    "defaultValue": "${{secret(32)}}",
+    "description": "JWT signing key for Artalk (must be stable across restarts). Auto-generated on deploy.",
+    "isOptional": false
+  },
+  "ARTALK_TRUSTED_DOMAINS": {
+    "defaultValue": "${{hexo.RAILWAY_PUBLIC_DOMAIN}}",
+    "description": "Extra origins allowed to call the comment API (space-separated). Auto-includes hexo's domain for CORS.",
+    "isOptional": true
+  },
+  "ARTALK_LOCALE": {
+    "defaultValue": "en",
+    "description": "UI language (e.g. en, zh-CN, ja, fr, ko, ru, tr).",
+    "isOptional": true
+  },
+  "ARTALK_TIMEZONE": {
+    "defaultValue": "UTC",
+    "description": "Timezone for Artalk (IANA name).",
+    "isOptional": true
+  },
   "MINIO_ROOT_USER": {
     "defaultValue": "minioadmin",
-    "description": "S3 root username for the MinIO object store (endpoint /minio, console /minio-console/).",
+    "description": "S3 root username for the MinIO object store.",
     "isOptional": true
   },
   "MINIO_ROOT_PASSWORD": {
-    "defaultValue": "${{secret(16)}}",
-    "description": "Auto-generated S3 root password for MinIO.",
+    "defaultValue": "${{secret(32)}}",
+    "description": "Auto-generated S3 root password for MinIO (read from storage service's Variables tab after deploy).",
     "isOptional": false
-  },
-  "TZ": {
-    "defaultValue": "UTC",
-    "description": "Timezone for the container, Hexo and Artalk (IANA name, e.g. America/New_York).",
-    "isOptional": true
   }
 }

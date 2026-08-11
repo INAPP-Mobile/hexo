@@ -1,0 +1,62 @@
+{
+  "PORT": {
+    "value": "80",
+    "description": "Nginx HTTP port for the hexo service (Railway routes public domain here). Fixed at 80."
+  },
+  "TZ": {
+    "value": "UTC",
+    "description": "Container timezone for all services (IANA name, e.g. America/New_York)."
+  },
+  "ADMIN_USERNAME": {
+    "value": "admin",
+    "description": "Login name for the hexo-admin web editor at /admin/."
+  },
+  "ADMIN_PASSWORD": {
+    "value": "${{secret(16)}}",
+    "description": "Auto-generated password for the hexo-admin editor (read it from the hexo service's Variables tab after deploy)."
+  },
+  "ARTALK_SITE_NAME": {
+    "value": "My Hexo Blog",
+    "description": "Site name used by the Artalk comment system."
+  },
+  "ARTALK_SITE_URL": {
+    "value": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}",
+    "description": "Public URL of the Artalk service. Auto-derived from comments service's public domain."
+  },
+  "ARTALK_DB_TYPE": {
+    "value": "sqlite",
+    "description": "Comment database: sqlite (file on the persistent volume) or pgsql/mysql/mssql (set DATABASE_URL too)."
+  },
+  "ARTALK_ADMIN_EMAIL": {
+    "value": "admin@example.com",
+    "description": "Email of the first comment moderator (login at /comment/admin/ on the comments service domain)."
+  },
+  "ARTALK_ADMIN_PASSWORD": {
+    "value": "${{secret(16)}}",
+    "description": "Auto-generated password for the Artalk moderator account."
+  },
+  "ARTALK_APP_KEY": {
+    "value": "${{secret(32)}}",
+    "description": "JWT signing key for Artalk (must be stable across restarts). Auto-generated on deploy."
+  },
+  "ARTALK_TRUSTED_DOMAINS": {
+    "value": "${{hexo.RAILWAY_PUBLIC_DOMAIN}}",
+    "description": "Extra origins allowed to call the comment API (space-separated). Auto-includes hexo's domain for CORS."
+  },
+  "ARTALK_LOCALE": {
+    "value": "en",
+    "description": "UI language (e.g. en, zh-CN, ja, fr, ko, ru, tr)."
+  },
+  "ARTALK_TIMEZONE": {
+    "value": "UTC",
+    "description": "Timezone for Artalk (IANA name)."
+  },
+  "MINIO_ROOT_USER": {
+    "value": "minioadmin",
+    "description": "S3 root username for the MinIO object store."
+  },
+  "MINIO_ROOT_PASSWORD": {
+    "value": "${{secret(32)}}",
+    "description": "Auto-generated S3 root password for MinIO (read from storage service's Variables tab after deploy)."
+  }
+}

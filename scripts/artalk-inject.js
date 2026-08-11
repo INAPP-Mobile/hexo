@@ -8,6 +8,9 @@ const CDN = 'https://cdn.jsdelivr.net/npm/artalk@2/dist';
 function widgetHtml(pageKey, pageTitle) {
   const key = JSON.stringify(pageKey || '');
   const title = JSON.stringify(pageTitle || '');
+  // ARTALK_SITE_URL is injected by Railway template vars (default: comments
+  // service's public domain). Falls back to same-origin /comment for local dev.
+  const server = process.env.ARTALK_SITE_URL || '';
   return [
     '<div id="artalk-comments" style="margin-top:56px"></div>',
     '<link rel="stylesheet" href="' + CDN + '/Artalk.css">',
@@ -20,7 +23,7 @@ function widgetHtml(pageKey, pageTitle) {
     '    el: el,',
     '    pageKey: ' + key + ' || location.pathname,',
     '    pageTitle: ' + title + ' || document.title,',
-    '    server: location.origin + "/comment",',
+    '    server: ' + JSON.stringify(server) + ' || location.origin + "/comment",',
     '    darkMode: false',
     '  });',
     '})();',

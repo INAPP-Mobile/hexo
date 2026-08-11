@@ -1,0 +1,46 @@
+# ===============
+# Header
+# ===============
+# Navigation menu
+menu:
+  Home: /
+  Archives: /archives
+# RSS link
+rss: /atom.xml
+# Path of title banner image of page top
+banner: "images/banner.jpg"
+# Subtitle of page top
+subtitle:
+# Header links with icon, specified links will appear at the top right corner of the page
+# Each name must correspond to the icon name of Fork Awesome
+# https://forkaweso.me/Fork-Awesome/icons/
+links:
+#  github: https://github.com/your_github_account
+#  twitter: https://twitter.com/your_twitter_account
+#  telegram: https://t.me/your_telegram_account
+
+# ===============
+# Content
+# ===============
+# "Read More" link at the bottom of excerpted articles. `false` to hide the link.
+excerpt_link: Read More
+# Enable fancybox
+fancybox: true
+
+# ===============
+# Sidebar
+# ===============
+# Sidebar widgets (available: category, tag, archive, tagcloud)
+widgets:
+  - category
+  - tag
+  - archive
+  - tagcloud
+
+# ===============
+# Miscellaneous
+# ===============
+# Icon of the site
+favicon: "images/favicon.ico"
+# Profile avatar
+avatar: "images/avatar.jpg"

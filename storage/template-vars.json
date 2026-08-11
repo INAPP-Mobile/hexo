@@ -1,0 +1,17 @@
+{
+  "TZ": {
+    "defaultValue": "UTC",
+    "description": "Container timezone (IANA name).",
+    "isOptional": true
+  },
+  "MINIO_ROOT_USER": {
+    "defaultValue": "minioadmin",
+    "description": "S3 root username for the MinIO object store.",
+    "isOptional": true
+  },
+  "MINIO_ROOT_PASSWORD": {
+    "defaultValue": "${{secret(32)}}",
+    "description": "Auto-generated S3 root password for MinIO.",
+    "isOptional": false
+  }
+}

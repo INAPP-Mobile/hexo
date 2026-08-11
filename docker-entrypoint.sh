@@ -2,11 +2,7 @@
 # Hexo blogging platform container bootstrap.
 # - seeds /data/source and /data/public from pristine image copies on first boot
 # - injects hexo-admin auth + site URL into _config.yml from env
-# - generates /data/artalk.yml (Artalk comments) from env
-# - hands off to supervisord (nginx + hexo + artalk + ttyd + minio)
-#
-# Single persistent volume at /data: site source, generated site, comment
-# SQLite DB, uploaded images and MinIO data all live there.
+# - hands off to supervisord (nginx + hexo + ttyd + regenerate)
 
 set -e
 
@@ -35,15 +31,21 @@ fi
 # --- hexo-admin auth (bcrypt hash; removed when ADMIN_PASSWORD is unset) ---
 node /app/tools/admin-auth.js "$ADMIN_USERNAME" "$ADMIN_PASSWORD"
 
-# --- Artalk comments config ---
-node /app/tools/gen-artalk-config.js
+# --- protect ttyd web terminal with HTTP Basic Auth (same creds as admin) ---
+if [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ]; then
+  if command -v htpasswd >/dev/null 2>&1; then
+    htpasswd -bc /etc/nginx/.htpasswd "$ADMIN_USERNAME" "$ADMIN_PASSWORD"
+  else
+    printf '%s:%s\n' "$ADMIN_USERNAME" "$(openssl passwd -apr1 "$ADMIN_PASSWORD")" > /etc/nginx/.htpasswd
+  fi
+  chmod 644 /etc/nginx/.htpasswd
+  echo "[entrypoint] terminal auth enabled for user ${ADMIN_USERNAME}"
+else
+  echo "[entrypoint] WARNING: ADMIN_USERNAME/ADMIN_PASSWORD unset - /terminal/ is OPEN"
+fi
 
 # --- ensure everything the node processes touch is node-owned ---
 chown -R node:node /app /data 2>/dev/null || true
 
-# --- MinIO defaults ---
-export MINIO_ROOT_USER="${MINIO_ROOT_USER:-minioadmin}"
-export MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD:-minioadmin}"
-
 echo "[entrypoint] starting supervisord"
-exec supervisord -n -c /etc/supervisor/supervisord.conf
+exec supervisord -n -c /etc/supervisor/conf.d/hexo.conf
