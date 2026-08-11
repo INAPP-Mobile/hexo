@@ -1,0 +1,42 @@
+{
+  "TZ": {
+    "value": "UTC",
+    "description": "Container timezone (IANA name)."
+  },
+  "ARTALK_SITE_NAME": {
+    "value": "My Hexo Blog",
+    "description": "Site name used by the Artalk comment system."
+  },
+  "ARTALK_SITE_URL": {
+    "value": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}",
+    "description": "Public URL of the Artalk service."
+  },
+  "ARTALK_DB_TYPE": {
+    "value": "sqlite",
+    "description": "Comment database: sqlite (default) or pgsql/mysql/mssql."
+  },
+  "ARTALK_ADMIN_EMAIL": {
+    "value": "admin@example.com",
+    "description": "Email of the first comment moderator."
+  },
+  "ARTALK_ADMIN_PASSWORD": {
+    "value": "${{secret(16)}}",
+    "description": "Auto-generated password for the Artalk moderator account."
+  },
+  "ARTALK_APP_KEY": {
+    "value": "${{secret(32)}}",
+    "description": "JWT signing key for Artalk (must be stable across restarts). Auto-generated on deploy."
+  },
+  "ARTALK_TRUSTED_DOMAINS": {
+    "value": "${{hexo.RAILWAY_PUBLIC_DOMAIN}}",
+    "description": "Extra origins allowed to call the comment API (auto-includes hexo domain)."
+  },
+  "ARTALK_LOCALE": {
+    "value": "en",
+    "description": "UI language (e.g. en, zh-CN, ja, fr, ko, ru, tr)."
+  },
+  "ARTALK_TIMEZONE": {
+    "value": "UTC",
+    "description": "Timezone for Artalk (IANA name)."
+  }
+}
