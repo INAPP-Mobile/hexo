@@ -29,11 +29,18 @@ else
     DOMAINS_LIST=""
 fi
 
+# Artalk's CORS check parses each trusted_domains entry as a URL and silently
+# skips entries without a scheme (server/middleware/cors.go: urlP.Scheme == "").
+# Normalize: prepend https:// to bare domains so they actually match.
 TRUSTED_YAML=""
 if [ -n "${DOMAINS_LIST}" ]; then
     set -- ${DOMAINS_LIST}
     for domain in "$@"; do
-        TRUSTED_YAML="${TRUSTED_YAML}$(printf '    - %s\n' "${domain}")"
+        case "${domain}" in
+            *://*) norm_domain="${domain}" ;;
+            *)     norm_domain="https://${domain}" ;;
+        esac
+        TRUSTED_YAML="${TRUSTED_YAML}$(printf '    - %s\n' "${norm_domain}")"
     done
 fi
 
