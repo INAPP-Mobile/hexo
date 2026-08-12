@@ -1,52 +1,62 @@
 {
   "TZ": {
-    "defaultValue": "UTC",
+    "name": "TZ",
     "description": "Container timezone (IANA name).",
-    "isOptional": true
+    "isOptional": true,
+    "defaultValue": "UTC"
   },
   "ARTALK_SITE_NAME": {
-    "defaultValue": "My Hexo Blog",
+    "name": "ARTALK_SITE_NAME",
     "description": "Site name used by the Artalk comment system.",
-    "isOptional": true
+    "isOptional": true,
+    "defaultValue": "My Hexo Blog"
   },
   "ARTALK_SITE_URL": {
-    "defaultValue": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}",
+    "name": "ARTALK_SITE_URL",
     "description": "Public URL of the Artalk service.",
-    "isOptional": true
+    "isOptional": true,
+    "defaultValue": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}"
   },
   "ARTALK_DB_TYPE": {
-    "defaultValue": "sqlite",
+    "name": "ARTALK_DB_TYPE",
     "description": "Comment database: sqlite (default) or pgsql/mysql/mssql.",
-    "isOptional": true
+    "isOptional": true,
+    "defaultValue": "sqlite"
   },
   "ARTALK_ADMIN_EMAIL": {
-    "defaultValue": "admin@example.com",
+    "name": "ARTALK_ADMIN_EMAIL",
     "description": "Email of the first comment moderator.",
-    "isOptional": true
+    "isOptional": true,
+    "defaultValue": "admin@example.com"
   },
   "ARTALK_ADMIN_PASSWORD": {
-    "defaultValue": "${{secret(16)}}",
+    "name": "ARTALK_ADMIN_PASSWORD",
     "description": "Auto-generated password for the Artalk moderator account.",
-    "isOptional": false
+    "isOptional": true,
+    "defaultValue": "${{secret(16)}}"
   },
   "ARTALK_APP_KEY": {
-    "defaultValue": "${{secret(32)}}",
+    "name": "ARTALK_APP_KEY",
     "description": "JWT signing key for Artalk (must be stable across restarts). Auto-generated on deploy.",
-    "isOptional": false
+    "isOptional": true,
+    "defaultValue": "${{secret(32)}}"
   },
   "ARTALK_TRUSTED_DOMAINS": {
-    "defaultValue": "${{hexo.RAILWAY_PUBLIC_DOMAIN}}",
+    "name": "ARTALK_TRUSTED_DOMAINS",
     "description": "Extra origins allowed to call the comment API (auto-includes hexo domain).",
-    "isOptional": true
+    "isOptional": true,
+    "defaultValue": "${{hexo.RAILWAY_PUBLIC_DOMAIN}}"
   },
   "ARTALK_LOCALE": {
-    "defaultValue": "en",
+    "name": "ARTALK_LOCALE",
     "description": "UI language (e.g. en, zh-CN, ja, fr, ko, ru, tr).",
-    "isOptional": true
+    "isOptional": true,
+    "defaultValue": "en"
   },
   "ARTALK_TIMEZONE": {
-    "defaultValue": "UTC",
-    "description": "Timezone for Artalk (IANA name).",
-    "isOptional": true
+    "name": "ARTALK_TIMEZONE",
+    "description": "Timezone used for comment timestamps (IANA name).",
+    "isOptional": true,
+    "defaultValue": "UTC"
   }
 }

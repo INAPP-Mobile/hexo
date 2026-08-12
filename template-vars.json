@@ -1,77 +1,32 @@
 {
   "PORT": {
-    "defaultValue": "80",
-    "description": "Nginx HTTP port for the hexo service (Railway routes public domain here). Fixed at 80.",
-    "isOptional": false
+    "name": "PORT",
+    "description": "Port the container listens on (nginx).",
+    "isOptional": true,
+    "defaultValue": "80"
   },
   "TZ": {
-    "defaultValue": "UTC",
-    "description": "Container timezone for all services (IANA name, e.g. America/New_York).",
-    "isOptional": true
+    "name": "TZ",
+    "description": "Container timezone (IANA name).",
+    "isOptional": true,
+    "defaultValue": "UTC"
   },
   "ADMIN_USERNAME": {
-    "defaultValue": "admin",
-    "description": "Login name for the hexo-admin web editor at /admin/.",
-    "isOptional": true
+    "name": "ADMIN_USERNAME",
+    "description": "Username for hexo-admin and the /terminal/ basic-auth gate.",
+    "isOptional": true,
+    "defaultValue": "admin"
   },
   "ADMIN_PASSWORD": {
-    "defaultValue": "${{secret(16)}}",
-    "description": "Auto-generated password for the hexo-admin editor (read it from the hexo service's Variables tab after deploy).",
-    "isOptional": false
-  },
-  "ARTALK_SITE_NAME": {
-    "defaultValue": "My Hexo Blog",
-    "description": "Site name used by the Artalk comment system.",
-    "isOptional": true
+    "name": "ADMIN_PASSWORD",
+    "description": "Auto-generated password for hexo-admin and the /terminal/ basic-auth gate.",
+    "isOptional": true,
+    "defaultValue": "${{secret(16)}}"
   },
   "ARTALK_SITE_URL": {
-    "defaultValue": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}",
-    "description": "Public URL of the Artalk service. Auto-derived from comments service's public domain.",
-    "isOptional": true
-  },
-  "ARTALK_DB_TYPE": {
-    "defaultValue": "sqlite",
-    "description": "Comment database: sqlite (file on the persistent volume) or pgsql/mysql/mssql (set DATABASE_URL too).",
-    "isOptional": true
-  },
-  "ARTALK_ADMIN_EMAIL": {
-    "defaultValue": "admin@example.com",
-    "description": "Email of the first comment moderator (login at /sidebar/ on the comments service domain).",
-    "isOptional": true
-  },
-  "ARTALK_ADMIN_PASSWORD": {
-    "defaultValue": "${{secret(16)}}",
-    "description": "Auto-generated password for the Artalk moderator account.",
-    "isOptional": false
-  },
-  "ARTALK_APP_KEY": {
-    "defaultValue": "${{secret(32)}}",
-    "description": "JWT signing key for Artalk (must be stable across restarts). Auto-generated on deploy.",
-    "isOptional": false
-  },
-  "ARTALK_TRUSTED_DOMAINS": {
-    "defaultValue": "${{hexo.RAILWAY_PUBLIC_DOMAIN}}",
-    "description": "Extra origins allowed to call the comment API (space-separated). Auto-includes hexo's domain for CORS.",
-    "isOptional": true
-  },
-  "ARTALK_LOCALE": {
-    "defaultValue": "en",
-    "description": "UI language (e.g. en, zh-CN, ja, fr, ko, ru, tr).",
-    "isOptional": true
-  },
-  "ARTALK_TIMEZONE": {
-    "defaultValue": "UTC",
-    "description": "Timezone for Artalk (IANA name).",
-    "isOptional": true
-  },
-  "MINIO_ROOT_USER": {
-    "defaultValue": "minioadmin",
-    "description": "S3 root username for the MinIO object store.",
-    "isOptional": true
-  },
-  "MINIO_ROOT_PASSWORD": {
-    "defaultValue": "${{secret(32)}}",
-    "description": "Auto-generated S3 root password for MinIO (read from storage service's Variables tab after deploy).",
-    "isOptional": false
+    "name": "ARTALK_SITE_URL",
+    "description": "Public URL of the Artalk comment service (auto-derived from the comments service's public domain).",
+    "isOptional": true,
+    "defaultValue": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}"
   }
 }
