@@ -3,6 +3,14 @@
     "value": "UTC",
     "description": "Container timezone (IANA name)."
   },
+  "PORT": {
+    "value": "9000",
+    "description": "Port the MinIO S3 API listens on."
+  },
+  "CONSOLE_PORT": {
+    "value": "9001",
+    "description": "Port the MinIO web console listens on."
+  },
   "MINIO_ROOT_USER": {
     "value": "minioadmin",
     "description": "S3 root username for the MinIO object store."

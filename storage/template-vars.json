@@ -5,6 +5,18 @@
     "isOptional": true,
     "defaultValue": "UTC"
   },
+  "PORT": {
+    "name": "PORT",
+    "description": "Port the MinIO S3 API listens on.",
+    "isOptional": true,
+    "defaultValue": "9000"
+  },
+  "CONSOLE_PORT": {
+    "name": "CONSOLE_PORT",
+    "description": "Port the MinIO web console listens on.",
+    "isOptional": true,
+    "defaultValue": "9001"
+  },
   "MINIO_ROOT_USER": {
     "name": "MINIO_ROOT_USER",
     "description": "S3 root username for the MinIO object store.",

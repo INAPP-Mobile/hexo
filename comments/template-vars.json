@@ -5,6 +5,12 @@
     "isOptional": true,
     "defaultValue": "UTC"
   },
+  "PORT": {
+    "name": "PORT",
+    "description": "Port the Artalk comment service listens on.",
+    "isOptional": true,
+    "defaultValue": "8080"
+  },
   "ARTALK_SITE_NAME": {
     "name": "ARTALK_SITE_NAME",
     "description": "Site name used by the Artalk comment system.",

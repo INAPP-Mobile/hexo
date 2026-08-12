@@ -3,6 +3,10 @@
     "value": "UTC",
     "description": "Container timezone (IANA name)."
   },
+  "PORT": {
+    "value": "8080",
+    "description": "Port the Artalk comment service listens on."
+  },
   "ARTALK_SITE_NAME": {
     "value": "My Hexo Blog",
     "description": "Site name used by the Artalk comment system."
