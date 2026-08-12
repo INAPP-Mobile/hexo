@@ -47,5 +47,15 @@ fi
 # --- ensure everything the node processes touch is node-owned ---
 chown -R node:node /app /data 2>/dev/null || true
 
+# --- regenerate static site with RUNTIME env vars ---
+# The Docker build stage runs `hexo generate` without Railway env vars, so
+# ARTALK_SITE_URL (and url:) bake into the HTML as empty/stale values, and the
+# baked db.json cache makes every later generate report "0 files generated".
+# Drop the cache and re-render now that the real env is present.
+rm -f /app/db.json
+echo "[entrypoint] regenerating static site with runtime env vars"
+(cd /app && /app/node_modules/.bin/hexo generate) || echo "[entrypoint] WARNING: hexo generate failed - serving seeded site as-is"
+chown -R node:node /app /data 2>/dev/null || true
+
 echo "[entrypoint] starting supervisord"
 exec supervisord -n -c /etc/supervisor/conf.d/hexo.conf
