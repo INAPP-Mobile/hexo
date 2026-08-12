@@ -13,16 +13,28 @@ if [ -z "${ARTALK_APP_KEY}" ]; then
     export ARTALK_APP_KEY=$(head -c 32 /dev/urandom | base64 | tr -d '\n' | cut -c1-32)
 fi
 
-# Build trusted_domains YAML array from space-separated ARTALK_TRUSTED_DOMAINS
-# POSIX sh: use set -- to split by IFS (default space/tab/newline)
+# Build trusted_domains YAML array (Artalk sends CORS headers only for these origins).
+# Sources, in priority order:
+#   1. ARTALK_TRUSTED_DOMAINS (space-separated list, e.g. "a.com b.com")
+#   2. RAILWAY_SERVICE_HEXO_URL (Railway auto-injects sibling service URLs)
+#   3. RAILWAY_PUBLIC_DOMAIN (fallback for local/dev runs)
+# NOTE: POSIX sh does NOT interpret \n inside double quotes - use printf for real newlines.
 if [ -n "${ARTALK_TRUSTED_DOMAINS}" ]; then
-    TRUSTED_YAML=""
-    set -- ${ARTALK_TRUSTED_DOMAINS}
-    for domain in "$@"; do
-        TRUSTED_YAML="${TRUSTED_YAML}    - ${domain}\n"
-    done
+    DOMAINS_LIST="${ARTALK_TRUSTED_DOMAINS}"
+elif [ -n "${RAILWAY_SERVICE_HEXO_URL}" ]; then
+    DOMAINS_LIST="${RAILWAY_SERVICE_HEXO_URL}"
+elif [ -n "${RAILWAY_PUBLIC_DOMAIN}" ]; then
+    DOMAINS_LIST="${RAILWAY_PUBLIC_DOMAIN}"
 else
-    TRUSTED_YAML=""
+    DOMAINS_LIST=""
+fi
+
+TRUSTED_YAML=""
+if [ -n "${DOMAINS_LIST}" ]; then
+    set -- ${DOMAINS_LIST}
+    for domain in "$@"; do
+        TRUSTED_YAML="${TRUSTED_YAML}$(printf '    - %s\n' "${domain}")"
+    done
 fi
 
 # Generate artalk.yml from environment (Artalk 2.10 schema)
