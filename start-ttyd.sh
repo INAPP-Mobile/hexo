@@ -6,7 +6,7 @@
 set -e
 
 if [ -n "${ADMIN_USERNAME}" ] && [ -n "${ADMIN_PASSWORD}" ]; then
-    exec ttyd -W -i 127.0.0.1 -p 7681 -c "${ADMIN_USERNAME}:${ADMIN_PASSWORD}" sh -l
+    exec ttyd -W -i 127.0.0.1 -p 7681 -c "${ADMIN_USERNAME}:${ADMIN_PASSWORD}" bash
 fi
 
-exec ttyd -W -i 127.0.0.1 -p 7681 sh -l
+exec ttyd -W -i 127.0.0.1 -p 7681 bash
