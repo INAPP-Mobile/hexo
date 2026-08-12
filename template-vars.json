@@ -28,5 +28,29 @@
     "description": "Public URL of the Artalk comment service (auto-derived from the comments service's public domain).",
     "isOptional": true,
     "defaultValue": "https://${{comments.RAILWAY_PUBLIC_DOMAIN}}"
+  },
+  "MINIO_ENDPOINT": {
+    "name": "MINIO_ENDPOINT",
+    "description": "S3 endpoint for the storage service (auto-derived from its public domain). Enables S3-backed image uploads from the editor.",
+    "isOptional": true,
+    "defaultValue": "https://${{storage.RAILWAY_PUBLIC_DOMAIN}}"
+  },
+  "MINIO_BUCKET": {
+    "name": "MINIO_BUCKET",
+    "description": "Bucket where editor-uploaded images are stored (auto-created on first upload).",
+    "isOptional": true,
+    "defaultValue": "blog-images"
+  },
+  "MINIO_ACCESS_KEY": {
+    "name": "MINIO_ACCESS_KEY",
+    "description": "S3 access key for the storage service (shared from storage.MINIO_ROOT_USER).",
+    "isOptional": true,
+    "defaultValue": "${{storage.MINIO_ROOT_USER}}"
+  },
+  "MINIO_SECRET_KEY": {
+    "name": "MINIO_SECRET_KEY",
+    "description": "S3 secret key for the storage service (shared from storage.MINIO_ROOT_PASSWORD).",
+    "isOptional": true,
+    "defaultValue": "${{storage.MINIO_ROOT_PASSWORD}}"
   }
 }
