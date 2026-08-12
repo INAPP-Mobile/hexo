@@ -11,6 +11,9 @@ function widgetHtml(pageKey, pageTitle) {
   // ARTALK_SITE_URL is injected by Railway template vars (default: comments
   // service's public domain). Falls back to same-origin /comment for local dev.
   const server = process.env.ARTALK_SITE_URL || '';
+  // ARTALK_SITE_NAME must match the comments service's site_default (Artalk
+  // backend rejects empty site_name with 400 "Site name cannot be empty").
+  const site = process.env.ARTALK_SITE_NAME || 'My Hexo Blog';
   return [
     '<div id="artalk-comments" style="margin-top:56px"></div>',
     '<link rel="stylesheet" href="' + CDN + '/Artalk.css">',
@@ -24,6 +27,7 @@ function widgetHtml(pageKey, pageTitle) {
     '    pageKey: ' + key + ' || location.pathname,',
     '    pageTitle: ' + title + ' || document.title,',
     '    server: ' + JSON.stringify(server) + ' || location.origin + "/comment",',
+    '    site: ' + JSON.stringify(site) + ',',
     '    darkMode: false',
     '  });',
     '})();',
