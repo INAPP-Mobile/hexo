@@ -2,7 +2,7 @@
 
 A full blogging platform on Railway: a fast static blog with browser-based editor and web terminal, plus separate comment system and S3-compatible object storage — **three services, three public URLs**.
 
-[![Deploy to Railway](https://railway.app/button.svg)](https://railway.com/deploy/ZBOVUG)
+[![Deploy to Railway](https://railway.app/button.svg)](https://railway.com/deploy/QzWy7Y)
 
 ## Services & URLs
 
