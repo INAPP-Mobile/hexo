@@ -1,6 +1,6 @@
 # Deploy and Host
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/YQDVrI)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/hexo)
 
 ![Hexo Blog Platform](https://raw.githubusercontent.com/INAPP-Mobile/hexo/main/template-icon.svg)
 
