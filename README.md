@@ -1,8 +1,44 @@
-# Hexo Blog Platform
+# Deploy and Host
 
-A full blogging platform on Railway: a fast static blog with browser-based editor and web terminal, plus separate comment system and S3-compatible object storage — **three services, three public URLs**.
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/YQDVrI)
 
-[![Deploy to Railway](https://railway.app/button.svg)](https://railway.com/deploy/YQDVrI)
+![Hexo Blog Platform](https://raw.githubusercontent.com/INAPP-Mobile/hexo/main/template-icon.svg)
+
+Hexo Blog Platform is a complete self-hosted blogging stack on Railway: a fast static blog with a browser-based editor and web terminal, plus a separate self-hosted comment system (Artalk) and S3-compatible object storage (MinIO) — **three services, three public URLs**, all provisioned with one click.
+
+## About Hosting
+
+The template deploys three independent services, each built from its own Dockerfile and each with its own persistent volume at `/data`:
+
+- **hexo** — nginx + Hexo 8 + hexo-admin editor + ttyd web terminal (supervisord-managed), `PORT=80`
+- **comments** — Artalk 2.x comment system (SQLite by default; PostgreSQL/MySQL optional), `PORT=8080`
+- **storage** — MinIO S3-compatible object storage, `PORT=9000`
+
+Railway provides compute, TLS at the edge, public URLs, and volumes. New posts auto-regenerate the static site within ~60 seconds. Images pasted into the editor upload straight to MinIO (public-read `blog-images` bucket), so they survive redeploys.
+
+## Why Deploy
+
+- **All-in-one blogging platform** — blog, browser editor, web terminal, comments, and S3 storage in one deploy
+- **Self-hosted comments** — Artalk with SQLite on a persistent volume; no third-party comment service
+- **S3-backed image upload** — editor images go to your own MinIO bucket, not the local disk
+- **Web terminal** — ttyd shell for `hexo`, `git`, and `npm` maintenance, protected by HTTP Basic Auth
+- **Persistent volumes** — content, generated site, comment DB, and MinIO data survive restarts
+- **Auto-generated credentials** — every deploy form generates admin, moderator, and MinIO passwords for you
+
+## Common Use Cases
+
+- **Personal blog** — write Markdown posts from the browser at `/admin/`, publish with one click
+- **Multi-author site** — share the editor credentials; moderate comments from the `/sidebar/` dashboard
+- **Self-hosted comments** — replace Disqus/utterances with your own Artalk instance wired to any Hexo/static site
+- **Private image/media storage** — use the MinIO service as an S3 endpoint for any app (`mc`, `rclone`, AWS SDKs)
+
+## Dependencies for Hexo
+
+No external accounts, API keys, or client tools are required. Everything is provisioned by Railway on deploy.
+
+### Deployment Dependencies
+
+Railway builds each service from its Dockerfiles (Dockerfile, `comments/Dockerfile`, `storage/Dockerfile`). Three volumes are mounted at `/data`. The deploy form generates all credentials via `${{secret(16)}}` placeholders; `ARTALK_SITE_URL` and `MINIO_ENDPOINT` are auto-derived from the services' public domains via `${{comments.RAILWAY_PUBLIC_DOMAIN}}` / `${{storage.RAILWAY_PUBLIC_DOMAIN}}`.
 
 ## Services & URLs
 
@@ -84,7 +120,7 @@ Open the **comments** service URL → `/sidebar/` → log in with `ARTALK_ADMIN_
 │  Railway Project                                            │
 ├─────────────────┬─────────────────────┬────────────────────┤
 │   (repo root)   │    comments/        │    storage/        │
-│  nginx+hexo+    │  (artalk/artalk-go │  (minio/minio +    │
+│  nginx+hexo+    │  (artalk/artalk-go  │  (minio/minio +    │
 │   ttyd          │   + entrypoint)     │   entrypoint)      │
 │  PORT=80        │  PORT=8080          │  PORT=9000         │
 │  /data volume   │  /data volume       │  /data volume      │
