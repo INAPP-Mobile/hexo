@@ -6,3 +6,4 @@ public/
 data/
 db.json
 npm-debug.log*
+_admin-config.yml

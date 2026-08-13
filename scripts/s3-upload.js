@@ -129,28 +129,44 @@ hexo.extend.filter.register('server_middleware', (app) => {
 
   // 2) Our interceptor. Body must be parsed here because hexo-admin's
   //    bodyParser.json is registered AFTER this filter (priority 10).
-  app.use(route, bodyParser.json({ limit: '50mb' }), (req, res, next) => {
-    if (req.method !== 'POST') return next();
-    if (!minioConfigured()) return next(); // stock local save
+  //    NOTE: connect 3.x `app.use(route, fn)` takes only ONE handler arg —
+  //    a second callback is silently dropped, so we invoke body-parser
+  //    manually inside a single middleware.
+  const jsonParser = bodyParser.json({ limit: '50mb' });
+  app.use(route, (req, res, next) => {
+    jsonParser(req, res, (parseErr) => {
+      if (parseErr) return next(parseErr);
+      if (req.method !== 'POST') return next();
+      if (!minioConfigured()) return next(); // stock local save
 
-    const parsed = parseDataUri(req.body && req.body.data);
-    if (!parsed) return res.status(400).json({ src: '', msg: 'Invalid image data' });
+      const parsed = parseDataUri(req.body && req.body.data);
+      if (!parsed) {
+        res.statusCode = 400;
+        res.setHeader('Content-type', 'application/json');
+        return res.end(JSON.stringify({ src: '', msg: 'Invalid image data' }));
+      }
 
-    const bucket = process.env.MINIO_BUCKET || 'blog-images';
-    const key = buildKey(req.body.filename, parsed.mime);
+      const bucket = process.env.MINIO_BUCKET || 'blog-images';
+      const key = buildKey(req.body.filename, parsed.mime);
 
-    ensureBucket(getClient(), bucket)
-      .then(() => getClient().putObject(bucket, key, parsed.buffer, {
-        'Content-Type': parsed.mime,
-      }))
-      .then(() => {
-        const base = String(process.env.MINIO_ENDPOINT).replace(/\/+$/, '');
-        hexo.log.info(`[s3-upload] stored ${bucket}/${key} (${parsed.buffer.length} bytes)`);
-        res.json({ src: `${base}/${bucket}/${key}`, msg: 'upload successful' });
-      })
-      .catch((err) => {
-        hexo.log.error(`[s3-upload] MinIO upload failed, falling back to local save: ${err.message}`);
-        next(); // graceful degradation: stock hexo-admin handler saves locally
-      });
+      const respond = (payload) => {
+        res.setHeader('Content-type', 'application/json');
+        res.end(JSON.stringify(payload));
+      };
+
+      ensureBucket(getClient(), bucket)
+        .then(() => getClient().putObject(bucket, key, parsed.buffer, {
+          'Content-Type': parsed.mime,
+        }))
+        .then(() => {
+          const base = String(process.env.MINIO_ENDPOINT).replace(/\/+$/, '');
+          hexo.log.info(`[s3-upload] stored ${bucket}/${key} (${parsed.buffer.length} bytes)`);
+          respond({ src: `${base}/${bucket}/${key}`, msg: 'upload successful' });
+        })
+        .catch((err) => {
+          hexo.log.error(`[s3-upload] MinIO upload failed, falling back to local save: ${err.message}`);
+          next(); // graceful degradation: stock hexo-admin handler saves locally
+        });
+    });
   });
 }, 0);
