@@ -97,24 +97,16 @@ log:
   enabled: true
   filename: "/data/artalk.log"
 
-# Admin
-admin:
-  enabled: false
-  anonymous: false
-  callback: "http://127.0.0.1:${PORT}/api/v2/auth/{provider}/callback"
-  email:
-    enable: false
-    host: ""
-    port: 25
-    username: ""
-    password: ""
-    from: ""
-    to: ""
-  accounts:
-    - email: "${ARTALK_ADMIN_EMAIL:-admin@example.com}"
-      password: "${ARTALK_ADMIN_PASSWORD:-changeme}"
-      nickname: "${ARTALK_ADMIN_NAME:-admin}"
-      permission: ["admin"]
+# Admin users (Artalk 2.10 schema: top-level `admin_users`, fields name/email/password)
+# NOTE: the old `admin.accounts` block is NOT a valid Artalk 2.10 config key - koanf
+# ignores it entirely, so no admin user was ever created and login failed with
+# "User not found". These users are imported into the DB by syncFromConf() on boot.
+admin_users:
+  - name: "${ARTALK_ADMIN_NAME:-admin}"
+    email: "${ARTALK_ADMIN_EMAIL:-admin@example.com}"
+    password: "${ARTALK_ADMIN_PASSWORD:-changeme}"
+    badge_name: "Admin"
+    badge_color: "#e74c3c"
 
 # Trusted domains (for CORS)
 trusted_domains:
