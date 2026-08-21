@@ -3,7 +3,7 @@
 # Single service, one public URL: nginx routes / (blog), /admin/, /terminal/
 
 ######## Stage 1: build site + node_modules ########
-FROM node:22-slim AS build
+FROM node:26-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
@@ -12,7 +12,7 @@ COPY . .
 RUN mkdir -p /data/source && cp -a /app/source/. /data/source/ && npx hexo generate
 
 ######## Stage 2: runtime ########
-FROM node:22-slim
+FROM node:26-slim
 ENV DEBIAN_FRONTEND=noninteractive \
     PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
