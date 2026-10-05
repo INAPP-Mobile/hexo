@@ -120,7 +120,7 @@ Open the **comments** service URL → `/sidebar/` → log in with `ARTALK_ADMIN_
 │  Railway Project                                            │
 ├─────────────────┬─────────────────────┬────────────────────┤
 │   (repo root)   │    comments/        │    storage/        │
-│  nginx+hexo+    │  (artalk/artalk-go  │  (minio/minio +    │
+│  nginx+hexo+    │  (artalk/artalk-go  │  (RustFS, MinIO-compatible +    │
 │   ttyd          │   + entrypoint)     │   entrypoint)      │
 │  PORT=80        │  PORT=8080          │  PORT=9000         │
 │  /data volume   │  /data volume       │  /data volume      │
@@ -157,5 +157,5 @@ All three get a persistent volume mounted at `/data`. Click the Deploy button, a
 - Hexo: https://github.com/hexojs/hexo
 - hexo-admin: https://github.com/jaredly/hexo-admin
 - Artalk: https://github.com/ArtalkJS/Artalk
-- MinIO: https://github.com/minio/minio
+- RustFS (MinIO-compatible S3): https://github.com/rustfs/rustfs
 - ttyd: https://github.com/tsl0922/ttyd
