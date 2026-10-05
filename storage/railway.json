@@ -5,6 +5,8 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
+    "startCommand": null,
+    "port": 9000,
     "healthcheckPath": "/minio/health/live",
     "healthcheckTimeout": 60,
     "restartPolicyType": "ON_FAILURE",

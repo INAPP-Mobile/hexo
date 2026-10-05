@@ -5,18 +5,18 @@
   },
   "PORT": {
     "value": "9000",
-    "description": "Port the MinIO S3 API listens on."
+    "description": "Port the RustFS (S3-compatible object storage, MinIO-compatible) S3 API listens on. RustFS binds RUSTFS_ADDRESS (0.0.0.0:9000) baked into its Dockerfile and ignores $PORT, so the domain must name the container port explicitly."
   },
   "CONSOLE_PORT": {
     "value": "9001",
-    "description": "Port the MinIO web console listens on."
+    "description": "Port the RustFS (S3-compatible object storage, MinIO-compatible) web console listens on."
   },
   "MINIO_ROOT_USER": {
     "value": "minioadmin",
-    "description": "S3 root username for the MinIO object store."
+    "description": "RustFS (S3-compatible object storage, MinIO-compatible) root username. RustFS reads this variable natively."
   },
   "MINIO_ROOT_PASSWORD": {
     "value": "${{secret(32)}}",
-    "description": "Auto-generated S3 root password for MinIO."
+    "description": "Auto-generated RustFS (S3-compatible object storage, MinIO-compatible) root password. RustFS reads this variable natively."
   }
 }
