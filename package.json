@@ -13,7 +13,7 @@
     "version": "8.1.2"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "bcryptjs": "^3.0.3",
     "hexo": "^8.0.0",
     "hexo-admin": "2.3.0",
     "hexo-generator-archive": "^2.0.0",
