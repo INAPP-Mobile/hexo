@@ -4,7 +4,7 @@
 
 ![Hexo Blog Platform](https://raw.githubusercontent.com/INAPP-Mobile/hexo/main/template-icon.svg)
 
-Hexo Blog Platform is a complete self-hosted blogging stack on Railway: a fast static blog with a browser-based editor and web terminal, plus a separate self-hosted comment system (Artalk) and S3-compatible object storage (MinIO) — **three services, three public URLs**, all provisioned with one click.
+Hexo Blog Platform is a complete self-hosted blogging stack on Railway: a fast static blog with a browser-based editor and web terminal, plus a separate self-hosted comment system (Artalk) and S3-compatible object storage (RustFS, MinIO-compatible) — **three services, three public URLs**, all provisioned with one click.
 
 ## About Hosting
 
@@ -12,25 +12,25 @@ The template deploys three independent services, each built from its own Dockerf
 
 - **hexo** — nginx + Hexo 8 + hexo-admin editor + ttyd web terminal (supervisord-managed), `PORT=80`
 - **comments** — Artalk 2.x comment system (SQLite by default; PostgreSQL/MySQL optional), `PORT=8080`
-- **storage** — MinIO S3-compatible object storage, `PORT=9000`
+- **storage** — RustFS S3-compatible object storage (MinIO-compatible), `PORT=9000`
 
-Railway provides compute, TLS at the edge, public URLs, and volumes. New posts auto-regenerate the static site within ~60 seconds. Images pasted into the editor upload straight to MinIO (public-read `blog-images` bucket), so they survive redeploys.
+Railway provides compute, TLS at the edge, public URLs, and volumes. New posts auto-regenerate the static site within ~60 seconds. Images pasted into the editor upload straight to RustFS (public-read `blog-images` bucket), so they survive redeploys.
 
 ## Why Deploy
 
 - **All-in-one blogging platform** — blog, browser editor, web terminal, comments, and S3 storage in one deploy
 - **Self-hosted comments** — Artalk with SQLite on a persistent volume; no third-party comment service
-- **S3-backed image upload** — editor images go to your own MinIO bucket, not the local disk
+- **S3-backed image upload** — editor images go to your own RustFS bucket, not the local disk
 - **Web terminal** — ttyd shell for `hexo`, `git`, and `npm` maintenance, protected by HTTP Basic Auth
-- **Persistent volumes** — content, generated site, comment DB, and MinIO data survive restarts
-- **Auto-generated credentials** — every deploy form generates admin, moderator, and MinIO passwords for you
+- **Persistent volumes** — content, generated site, comment DB, and object-storage data survive restarts
+- **Auto-generated credentials** — every deploy form generates admin, moderator, and storage passwords for you
 
 ## Common Use Cases
 
 - **Personal blog** — write Markdown posts from the browser at `/admin/`, publish with one click
 - **Multi-author site** — share the editor credentials; moderate comments from the `/sidebar/` dashboard
 - **Self-hosted comments** — replace Disqus/utterances with your own Artalk instance wired to any Hexo/static site
-- **Private image/media storage** — use the MinIO service as an S3 endpoint for any app (`mc`, `rclone`, AWS SDKs)
+- **Private image/media storage** — use the storage service (RustFS) as an S3 endpoint for any app (`mc`, `rclone`, AWS SDKs)
 
 ## Dependencies for Hexo
 
@@ -46,7 +46,7 @@ Railway builds each service from its Dockerfiles (Dockerfile, `comments/Dockerfi
 |---------|---------|--------------|-------------|
 | **hexo** | Blog + editor + terminal | `/`, `/admin/`, `/terminal/` | `https://hexo-production-xxxx.up.railway.app` |
 | **comments** | Artalk comments (widget + API + moderation) | `/` (API), `/sidebar/` (dashboard) | `https://comments-production-xxxx.up.railway.app` |
-| **storage** | MinIO S3 object storage | `/` (path-style API: `/bucket/key`) | `https://storage-production-xxxx.up.railway.app` |
+| **storage** | RustFS S3 object storage (MinIO-compatible) | `/` (path-style API: `/bucket/key`) | `https://storage-production-xxxx.up.railway.app` |
 
 ## Features
 
@@ -54,9 +54,9 @@ Railway builds each service from its Dockerfiles (Dockerfile, `comments/Dockerfi
 - **hexo-admin editor** — Write, edit and publish posts from the browser at `/admin/`. Password-protected (auto-generated credentials on one-click deploy).
 - **Web terminal** — ttyd shell at `/terminal/` for `hexo`, `git`, `npm` and any maintenance task. Protected with the same admin credentials (HTTP Basic Auth).
 - **Artalk comments** — Self-hosted comment system with SQLite storage on a persistent volume (PostgreSQL/MySQL optional via `ARTALK_DB_TYPE` + `DATABASE_URL`). Moderation dashboard at `/sidebar/` on the comments service URL (Artalk 2.x moved the console there).
-- **MinIO S3 storage** — S3-compatible object storage API at the storage service URL root (path-style: `/bucket/key`). Perfect for images, media, backups. The web console binds an internal port and is not publicly exposed — use `mc`, `rclone` or any S3 SDK.
-- **S3-backed image upload** — Images pasted into the hexo-admin editor are uploaded straight to MinIO (auto-created `blog-images` bucket, public-read policy) instead of the local disk, so they survive redeploys and are served from the storage service URL.
-- **Persistent volumes** — Each service gets its own `/data` volume keeping content, generated site, comments DB, and MinIO data across restarts.
+- **RustFS S3 storage (MinIO-compatible)** — S3-compatible object storage API at the storage service URL root (path-style: `/bucket/key`). Perfect for images, media, backups. The web console binds an internal port and is not publicly exposed — use `mc`, `rclone` or any S3 SDK.
+- **S3-backed image upload** — Images pasted into the hexo-admin editor are uploaded straight to RustFS (auto-created `blog-images` bucket, public-read policy) instead of the local disk, so they survive redeploys and are served from the storage service URL.
+- **Persistent volumes** — Each service gets its own `/data` volume keeping content, generated site, comments DB, and object-storage data across restarts.
 - **Client-side search** — `/search.xml` generated by hexo-generator-searchdb.
 
 ## Prerequisites
@@ -67,11 +67,11 @@ Railway builds each service from its Dockerfiles (Dockerfile, `comments/Dockerfi
 ## Quick Start
 
 1. Click **Deploy to Railway** (button above).
-2. Railway generates all passwords automatically (hexo admin, Artalk moderator, MinIO root).
+2. Railway generates all passwords automatically (hexo admin, Artalk moderator, storage root password).
 3. After deploy, note the three service URLs from Railway's dashboard:
    - **Blog/Editor/Terminal**: hexo service domain
    - **Comments**: comments service domain → `/sidebar/` for moderation
-   - **MinIO**: storage service domain → S3 API endpoint
+   - **RustFS storage**: storage service domain → S3 API endpoint
 4. Log in and start writing!
 
 ### Credentials (auto-generated, read from each service's **Variables** tab)
@@ -80,7 +80,7 @@ Railway builds each service from its Dockerfiles (Dockerfile, `comments/Dockerfi
 |---------|----------|----------|
 | hexo (editor + terminal) | `ADMIN_USERNAME` (default `admin`) | `ADMIN_PASSWORD` |
 | comments (Artalk) | `ARTALK_ADMIN_EMAIL` | `ARTALK_ADMIN_PASSWORD` |
-| storage (MinIO) | `MINIO_ROOT_USER` (default `minioadmin`) | `MINIO_ROOT_PASSWORD` |
+| storage (RustFS, MinIO-compatible) | `MINIO_ROOT_USER` (default `minioadmin`) | `MINIO_ROOT_PASSWORD` |
 
 ## Environment
 
@@ -92,7 +92,7 @@ All configuration is via environment variables (see `.env.example`). Key variabl
 - `ARTALK_DB_TYPE` — `sqlite` (default), `pgsql`, `mysql`, `mssql`
 - `ARTALK_TRUSTED_DOMAINS` — CORS origins for comment API (auto-includes hexo domain)
 - `ARTALK_LOCALE` / `ARTALK_TIMEZONE` — UI language & timezone
-- `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` — S3 root credentials
+- `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` — S3 root credentials for the RustFS storage service
 - `MINIO_ENDPOINT` / `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` / `MINIO_BUCKET` — S3-backed editor image upload (auto-derived from the storage service)
 
 ## Writing Posts
@@ -106,7 +106,7 @@ All configuration is via environment variables (see `.env.example`). Key variabl
 
 Open the **comments** service URL → `/sidebar/` → log in with `ARTALK_ADMIN_EMAIL` / `ARTALK_ADMIN_PASSWORD`
 
-## Object Storage (MinIO)
+## Object Storage (RustFS)
 
 - **S3 API**: `https://<storage-domain>/` (path-style access: `https://<storage-domain>/<bucket>/<key>`)
 - Credentials: `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`
@@ -148,7 +148,7 @@ This is a three-service template:
 
 - **hexo** — built from the repo root `Dockerfile` (nginx + hexo + hexo-admin + ttyd via supervisord)
 - **comments** — built from `comments/Dockerfile` (official Artalk image + config entrypoint)
-- **storage** — built from `storage/Dockerfile` (official MinIO image + entrypoint)
+- **storage** — built from `storage/Dockerfile` (RustFS image, MinIO-compatible S3)
 
 All three get a persistent volume mounted at `/data`. Click the Deploy button, and Railway provisions everything.
 
