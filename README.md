@@ -108,7 +108,7 @@ Open the **comments** service URL → `/sidebar/` → log in with `ARTALK_ADMIN_
 
 ## Object Storage (RustFS)
 
-- **S3 API**: `https://<storage-domain>/` (path-style access: `https://<storage-domain>/<bucket>/<key>`)
+- **S3 API**: `https://{storage-domain}/` (path-style access: `https://{storage-domain}/{bucket}/{key}`)
 - Credentials: `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`
 - Compatible with `mc`, `rclone`, AWS SDKs, etc.
 - The web console is bound to an internal port (not publicly exposed) — manage buckets via `mc` / SDKs.
