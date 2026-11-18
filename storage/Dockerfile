@@ -17,7 +17,7 @@
 # hexo specifics: the API port stays 9000 (RustFS's default) and the console 9001;
 # only the custom PORT-wrapper entrypoint had to go. The template already sets
 # both via RUSTFS_ADDRESS in this Dockerfile.
-FROM rustfs/rustfs:latest
+FROM rustfs/rustfs:1.0.6
 
 # Run as root, overriding the image's default `rustfs` user. Railway mounts volumes
 # root-owned, and as uid 10001 rustfs cannot write its metadata directory: it dies at
